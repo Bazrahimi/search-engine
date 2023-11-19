@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "@apollo/client": "^3.7.14",
+    "graphql": "^16.6.0",
     "dev": "vite",
     "start": "vite",
     "build": "vite build",
@@ -11,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.7",
     "bootstrap": "^5.2.3",
     "jwt-decode": "^3.1.2",
     "react": "^18.2.0",
