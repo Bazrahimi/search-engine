@@ -2,10 +2,13 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { loginUser } from '../utils/API';
 import Auth from '../utils/auth';
+import { LOGIN_USER} from '../utils/mutations'
+import { useMutation } from '@apollo/client';
 
 const LoginForm = () => {
+  const [login, { error, data } ] = useMutation(LOGIN_USER)
+
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
   const [validated] = useState(false);
   const [showAlert, setShowAlert] = useState(false);
@@ -23,22 +26,27 @@ const LoginForm = () => {
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+      setShowAlert(true);
+      return; // Exit early if form is not valid.
     }
 
     try {
-      const response = await loginUser(userFormData);
-
-      if (!response.ok) {
-        throw new Error('something went wrong!');
+      const { data } = await login({
+        variables: { ...userFormData },
+      });
+      if (data.login.token) {
+        Auth.login(data.login.token);
+      } else {
+        // If there is no token in the response, handle accordingly.
+        console.error('Login successful but no token received.');
+        setShowAlert(true);
       }
-
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
-    } catch (err) {
-      console.error(err);
+    } catch (e) {
+      console.error('Login error:', e);
       setShowAlert(true);
     }
+
+
 
     setUserFormData({
       username: '',

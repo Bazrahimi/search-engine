@@ -1,67 +1,84 @@
 import { useState } from 'react';
 import { Form, Button, Alert } from 'react-bootstrap';
 
-import { CREATE_USER } from '../utils/mutations'
+import { CREATE_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 import { useMutation } from '@apollo/client';
 
 const SignupForm = () => {
-  // initialize the useMutat hook with the CR
-  const [createUse, { error } ] = useMutation(CREATE_USER);
 
-  // set initial form state
+
+  // State to store user form data
   const [userFormData, setUserFormData] = useState({ username: '', email: '', password: '' });
-  // set state for form validation
-  const [validated] = useState(false);
-  // set state for alert
+
+    // Initialize the useMutation hook with the CREATE_USER mutation
+    const [signUpAccount, { error }] = useMutation(CREATE_USER);
+  
+  
+  // State to control the visibility of the alert message
   const [showAlert, setShowAlert] = useState(false);
 
+  // Handler for changes in form inputs
   const handleInputChange = (event) => {
     const { name, value } = event.target;
+    // Update the userFormData state with new input values
     setUserFormData({ ...userFormData, [name]: value });
   };
 
+  // Handler for form submission
   const handleFormSubmit = async (event) => {
     event.preventDefault();
-
-    // check if form has everything (as per react-bootstrap docs)
+  
+    // Check if form is valid according to HTML5 validation
     const form = event.currentTarget;
+    console.log('Form submitted', userFormData); // Debug log
+  
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+      console.log('Form is invalid!'); // Debug log
+      return; // Make sure to return if the form is not valid
     }
-
+  
     try {
-      const response = await createUser(userFormData);
+      // Execute the createUser mutation with variables from the form data
+      const { data } = await signUpAccount({
+        variables: { ...userFormData },
+    
+      });
 
-      if (!response.ok) {
-        throw new Error('something went wrong!');
-      }
 
-      const { token, user } = await response.json();
-      console.log(user);
-      Auth.login(token);
-    } catch (err) {
-      console.error(err);
+        if (data.createUser.token) {
+          Auth.login(data.createUser.token); // Automatically log the user in after signup
+        } else {
+          // Handle the case where signup didn't return a token
+          console.error('Signup successful but no token received.');
+          setShowAlert(true);
+        }
+
+
+
+      setUserFormData({
+        username: '',
+        email: '',
+        password: '',
+      });
+    } catch (e) {
+      // Log the error and show the alert message
+      console.error('Mutation error', e); // Debug log
       setShowAlert(true);
     }
-
-    setUserFormData({
-      username: '',
-      email: '',
-      password: '',
-    });
   };
 
   return (
     <>
-      {/* This is needed for the validation functionality above */}
-      <Form noValidate validated={validated} onSubmit={handleFormSubmit}>
-        {/* show alert if server response is bad */}
-        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert} variant='danger'>
-          Something went wrong with your signup!
+      <Form  onSubmit={handleFormSubmit}>
+        {/* Alert for displaying errors like network issues or failed submissions */}
+        <Alert dismissible onClose={() => setShowAlert(false)} show={showAlert || Boolean(error)} variant='danger'>
+          {error ? error.message : "Something went wrong with your signup!"}
         </Alert>
 
+        {/* Form Group for username */}
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='username'>Username</Form.Label>
           <Form.Control
@@ -72,9 +89,11 @@ const SignupForm = () => {
             value={userFormData.username}
             required
           />
+          {/* Feedback shown when form validation fails */}
           <Form.Control.Feedback type='invalid'>Username is required!</Form.Control.Feedback>
         </Form.Group>
 
+        {/* Form Group for email */}
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='email'>Email</Form.Label>
           <Form.Control
@@ -85,9 +104,11 @@ const SignupForm = () => {
             value={userFormData.email}
             required
           />
+          {/* Feedback shown when form validation fails */}
           <Form.Control.Feedback type='invalid'>Email is required!</Form.Control.Feedback>
         </Form.Group>
 
+        {/* Form Group for password */}
         <Form.Group className='mb-3'>
           <Form.Label htmlFor='password'>Password</Form.Label>
           <Form.Control
@@ -98,8 +119,11 @@ const SignupForm = () => {
             value={userFormData.password}
             required
           />
+          {/* Feedback shown when form validation fails */}
           <Form.Control.Feedback type='invalid'>Password is required!</Form.Control.Feedback>
         </Form.Group>
+
+        {/* Submit button, disabled if any of the form fields are empty */}
         <Button
           disabled={!(userFormData.username && userFormData.email && userFormData.password)}
           type='submit'

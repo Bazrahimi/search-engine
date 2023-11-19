@@ -28,10 +28,10 @@ const authLink = setContext((_, { headers }) => {
 });
 
 const client = new ApolloClient({
-  // set up our client to execute the 'authlink' middlware prior to making the request to our graphql API
-  Link: authLink.concat(httpLink),
+  link: authLink.concat(httpLink), // Changed 'Link' to 'link'
   cache: new InMemoryCache(),
-})
+});
+
 
 function App() {
   return (
