@@ -40,40 +40,33 @@ const resolvers = {
       const token = signToken(user);
       return { token, user };
     },
-  
 
-
-    deleteBook: async (parent, { bookId }, context) => {
-      if (context.user) {
-        return User.findByIdAndUpdate(
-          context.user._id,
-          { $pull: { savedBooks: { bookId: bookId } } },
-          { new: true }
-        ).populate('savedBooks');
-      }
-      throw new AuthenticationError('You need to be logged in!');
+      saveBook: async ( __ , { input }, context) => {
+        if (context.user) {
+            return User.findOneAndUpdate(
+                { _id: context.user._id },
+                { $addToSet: { savedBooks: input } },
+                { new: true, runValidators: true }
+            );
+        }
+        throw new AuthenticationError('Please login.');
     },
-    
-    saveBooks: async (parent, { bookInput }, context ) => {
-      if (!context.user) {
-        throw new AuthenticationError('You need to be logged in!');
-      }
 
-      // Add code to check if the book is already saved, to avoid duplicates
-      const bookAlreadySaved = context.user.savedBooks.find(book => book.bookId === bookInput.bookId);
-      if (bookAlreadySaved) {
-        throw new Error('Book already saved');
-      }
-
-      return User.findByIdAndUpdate(
-        context.user._id,
-        { $addToSet: { savedBooks: bookInput } },
-        { new: true }
-      );
-    }
-  
+    removeBook: async ( __ , { bookId }, context) => {
+        if (context.user) {
+            const updateUser = await User.findOneAndUpdate(
+                { _id: context.user._id },
+                { $pull: { savedBooks: { bookId } } },
+                { new: true }
+            )
+            return updateUser;
+        }
+        throw new AuthenticationError('Please login.');
+    },
   },
-
 };
 
 module.exports = resolvers;
+  
+
+
