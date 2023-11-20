@@ -1,7 +1,8 @@
 const typeDefs = `
 
 type Query {
-  _: Boolean
+  user: [User]!
+  userById(userId: ID!): User
 }
 
 type Book {
@@ -21,7 +22,7 @@ type User {
 }
 
 type Auth {
-  token: String
+  token: ID
   user: User
 }
 
