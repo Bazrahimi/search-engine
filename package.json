@@ -5,10 +5,8 @@
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build",
-    "dev": "cd server && npm run watch",
-    "build": "cd client && npm run build",
-    "install": "npm install && cd client && npm install && cd ../server && npm install"
+    "heroku-postbuild": "npm install --prefix client && npm run build --prefix client",
+    "dev": "npm run watch --prefix server"
   },
   "engines": {
     "node": "14.21.3"
