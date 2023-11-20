@@ -15,19 +15,38 @@ const SavedBooks = () => {
 
   // Delete books function
   const handleDeleteBook = async (bookId) => {
-    const token = Auth.loggedIn() ? Auth.getToken() : null;
-    if (!token) {
+    // Ensure the user is logged in
+    if (!Auth.loggedIn()) {
       return false;
     }
-    
-    // Remove book from db and local storage
+  
+    // Retrieve the token from local storage
+    const token = Auth.getToken();
+  
+    // Decode the token to get the user's ID and verify it's present
+    const decoded = Auth.getProfile();
+  
+    if (!decoded || !decoded._id) {
+      return false;
+    }
+  
+    // Proceed with removing the book
     try {
-      const { data } = await removeBook({ variables: { bookId }});
-      removeBookId(bookId);
+      const { data } = await removeBook({ variables: { bookId } });
+  
+      if (data && data.removeBook) {
+        // Update local storage
+        removeBookId(bookId);
+      } else {
+      }
     } catch (err) {
-      console.error(err);
+      console.error("Mutation error:", err);
     }
   };
+  
+
+  
+
 
   // If loading show loading
   if (loading) {

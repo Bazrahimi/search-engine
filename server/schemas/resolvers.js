@@ -52,17 +52,25 @@ const resolvers = {
         throw new AuthenticationError('Please login.');
     },
 
-    removeBook: async ( __ , { bookId }, context) => {
-        if (context.user) {
-            const updateUser = await User.findOneAndUpdate(
-                { _id: context.user._id },
-                { $pull: { savedBooks: { bookId } } },
-                { new: true }
-            )
-            return updateUser;
+    removeBook: async (_, { bookId }, context) => {
+      if (context.user) {
+        try {
+          const updateUser = await User.findOneAndUpdate(
+            { _id: context.user._id },
+            { $pull: { savedBooks: { bookId } } },
+            { new: true }
+          );
+          return updateUser;
+        } catch (error) {
+          console.error(error); // Log the error for debugging
+          throw new Error('Error removing the book.'); // Throw a more generic error to the client
         }
-        throw new AuthenticationError('Please login.');
+      }
+      throw new AuthenticationError('Please login.');
     },
+    
+
+
   },
 };
 
