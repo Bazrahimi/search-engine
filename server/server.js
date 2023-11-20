@@ -28,6 +28,7 @@ const startApolloServer = async () => {
   }));
 
   if (process.env.NODE_ENV === 'production') {
+    require('dotenv').config();
     app.use(express.static(path.join(__dirname, '../client/dist')));
 
     app.get('*', (req, res) => {
