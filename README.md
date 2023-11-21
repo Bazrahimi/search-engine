@@ -1,4 +1,3 @@
-
 # MERN: Book Search Engine
 
 ![License](https://img.shields.io/badge/License-MIT-yellow.png)
@@ -23,17 +22,20 @@ This book search engine application leverages the MERN stack (MongoDB, Express.j
 To install this application, follow these steps:
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Bazrahimi/book-search-engine
    ```
 
 2. Navigate to the directory:
+
    ```bash
    cd book-search-engine
    # Ensure Node.js (version 12.0.0 or above) is installed on your system.
    ```
 
 3. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -45,8 +47,8 @@ To install this application, follow these steps:
 
 ## Demo
 
-- **Heroku Screenshot**: ![Heroku Screenshot](./client/src/images/heroku-screenshot.png)
-- **Deployed Project**: [Book Search Engine](https://vast-wildwood-25507-132ad4bd4f85.herokuapp.com)
+- **Heroku Screenshot**: ![Heroku Screenshot](./client/public/Screenshot%202023-11-21%20at%201.49.27 pm.png)
+- **Deployed Project**: [Book Search Engine](https://rocky-refuge-26561-7a3129f4ca70.herokuapp.com)
 
 ## Technologies Used
 
