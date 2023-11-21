@@ -3,6 +3,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const express = require('express');
+const app = express();
 const { ApolloServer } = require('@apollo/server');
 const path = require('path');
 const { expressMiddleware } = require('@apollo/server/express4');
