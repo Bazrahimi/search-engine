@@ -1,23 +1,38 @@
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
-export default {
+export default defineConfig({
   plugins: [react()],
   server: {
-    // Specify server options here
     port: 3000,
     open: true,
     proxy: {
       '/graphql': {
-        target: 'http://localhost:3001',
-        secure: false,
+        target: 'https://rocky-refuge-26561-7a3129f4ca70.herokuapp.com',
         changeOrigin: true,
-      },
-    },
-  },
-  build: {
-    rollupOptions: {
-      external: ['graphql'],
-    },
-  },
-};
+        secure: false,
+      },     
+    }
+  }
+})
+
+
+
+// import { defineConfig } from 'vite'
+// import react from '@vitejs/plugin-react'
+
+// export default defineConfig({
+//   plugins: [react()],
+//   server: {
+//     port: 3000,
+//     open: true,
+
+//     proxy: {
+//       '/graphql': {
+//         target: 'http://localhost:3001',
+//         changeOrigin: true,
+//         secure: false,
+//       },     
+//     }
+//   }
+// })
